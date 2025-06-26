@@ -16,7 +16,6 @@ Resources:
       CodeUri: .
       Environment:
         Variables:
-          AWS_REGION: !Ref AWS::Region
           LEAGUES_TABLE: !Ref SLLeaguesTable
           TEAMS_TABLE: !Ref SLTeamsTable
           PLAYERS_TABLE: !Ref SLPlayersTable

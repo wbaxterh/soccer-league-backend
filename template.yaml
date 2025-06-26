@@ -16,11 +16,11 @@ Resources:
       CodeUri: .
       Environment:
         Variables:
-          LEAGUES_TABLE: !Ref SLLeaguesTable
-          TEAMS_TABLE: !Ref SLTeamsTable
-          PLAYERS_TABLE: !Ref SLPlayersTable
-          GAMES_TABLE: !Ref SLGamesTable
-          USERS_TABLE: !Ref SLUsersTable
+          LEAGUES_TABLE: SL-LeaguesTable
+          TEAMS_TABLE: SL-TeamsTable
+          PLAYERS_TABLE: SL-PlayersTable
+          GAMES_TABLE: SL-GamesTable
+          USERS_TABLE: SL-UsersTable
       Events:
         Api:
           Type: Api
@@ -29,126 +29,15 @@ Resources:
             Method: ANY
       Policies:
         - DynamoDBCrudPolicy:
-            TableName: !Ref SLLeaguesTable
+            TableName: SL-LeaguesTable
         - DynamoDBCrudPolicy:
-            TableName: !Ref SLTeamsTable
+            TableName: SL-TeamsTable
         - DynamoDBCrudPolicy:
-            TableName: !Ref SLPlayersTable
+            TableName: SL-PlayersTable
         - DynamoDBCrudPolicy:
-            TableName: !Ref SLGamesTable
+            TableName: SL-GamesTable
         - DynamoDBCrudPolicy:
-            TableName: !Ref SLUsersTable
-
-  SLLeaguesTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: SL-LeaguesTable
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      BillingMode: PAY_PER_REQUEST
-
-  SLTeamsTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: SL-TeamsTable
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: leagueId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: LeagueIdIndex
-          KeySchema:
-            - AttributeName: leagueId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-      BillingMode: PAY_PER_REQUEST
-
-  SLPlayersTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: SL-PlayersTable
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: teamId
-          AttributeType: S
-        - AttributeName: leagueId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: TeamIdIndex
-          KeySchema:
-            - AttributeName: teamId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-        - IndexName: LeagueIdIndex
-          KeySchema:
-            - AttributeName: leagueId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-      BillingMode: PAY_PER_REQUEST
-
-  SLGamesTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: SL-GamesTable
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-        - AttributeName: leagueId
-          AttributeType: S
-        - AttributeName: homeTeamId
-          AttributeType: S
-        - AttributeName: awayTeamId
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      GlobalSecondaryIndexes:
-        - IndexName: LeagueIdIndex
-          KeySchema:
-            - AttributeName: leagueId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-        - IndexName: HomeTeamIdIndex
-          KeySchema:
-            - AttributeName: homeTeamId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-        - IndexName: AwayTeamIdIndex
-          KeySchema:
-            - AttributeName: awayTeamId
-              KeyType: HASH
-          Projection:
-            ProjectionType: ALL
-      BillingMode: PAY_PER_REQUEST
-
-  SLUsersTable:
-    Type: AWS::DynamoDB::Table
-    Properties:
-      TableName: SL-UsersTable
-      AttributeDefinitions:
-        - AttributeName: id
-          AttributeType: S
-      KeySchema:
-        - AttributeName: id
-          KeyType: HASH
-      BillingMode: PAY_PER_REQUEST
+            TableName: SL-UsersTable
 
 Outputs:
   ApiUrl:

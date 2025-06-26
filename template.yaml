@@ -1,0 +1,157 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Soccer League Management REST API (Express + DynamoDB)
+
+Globals:
+  Function:
+    Timeout: 10
+    Runtime: nodejs18.x
+    MemorySize: 512
+
+Resources:
+  SoccerLeagueApi:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: dist/server.handler
+      CodeUri: .
+      Environment:
+        Variables:
+          AWS_REGION: !Ref AWS::Region
+          LEAGUES_TABLE: !Ref SLLeaguesTable
+          TEAMS_TABLE: !Ref SLTeamsTable
+          PLAYERS_TABLE: !Ref SLPlayersTable
+          GAMES_TABLE: !Ref SLGamesTable
+          USERS_TABLE: !Ref SLUsersTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SLLeaguesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SLTeamsTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SLPlayersTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SLGamesTable
+        - DynamoDBCrudPolicy:
+            TableName: !Ref SLUsersTable
+
+  SLLeaguesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: SL-LeaguesTable
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+  SLTeamsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: SL-TeamsTable
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: leagueId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: LeagueIdIndex
+          KeySchema:
+            - AttributeName: leagueId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+
+  SLPlayersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: SL-PlayersTable
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: teamId
+          AttributeType: S
+        - AttributeName: leagueId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: TeamIdIndex
+          KeySchema:
+            - AttributeName: teamId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: LeagueIdIndex
+          KeySchema:
+            - AttributeName: leagueId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+
+  SLGamesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: SL-GamesTable
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: leagueId
+          AttributeType: S
+        - AttributeName: homeTeamId
+          AttributeType: S
+        - AttributeName: awayTeamId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: LeagueIdIndex
+          KeySchema:
+            - AttributeName: leagueId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: HomeTeamIdIndex
+          KeySchema:
+            - AttributeName: homeTeamId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: AwayTeamIdIndex
+          KeySchema:
+            - AttributeName: awayTeamId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      BillingMode: PAY_PER_REQUEST
+
+  SLUsersTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: SL-UsersTable
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
+Outputs:
+  ApiUrl:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"

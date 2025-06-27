@@ -1,4 +1,4 @@
-import app from "./app";
+const app = require("./app");
 
 // Only start the server locally if not running in Lambda
 if (process.env.AWS_LAMBDA_FUNCTION_NAME === undefined) {
@@ -9,5 +9,5 @@ if (process.env.AWS_LAMBDA_FUNCTION_NAME === undefined) {
 }
 
 // Export Lambda handler for AWS
-import serverlessExpress from "@vendia/serverless-express";
-export const handler = serverlessExpress({ app });
+const serverlessExpress = require("@vendia/serverless-express");
+exports.handler = serverlessExpress({ app });

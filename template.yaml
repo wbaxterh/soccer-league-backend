@@ -12,8 +12,8 @@ Resources:
   SoccerLeagueApi:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: server.handler
-      CodeUri: dist/
+      Handler: src/server.handler
+      CodeUri: .
       Environment:
         Variables:
           LEAGUES_TABLE: SL-LeaguesTable

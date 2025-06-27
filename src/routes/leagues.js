@@ -1,7 +1,7 @@
-import { Router } from "express";
-import * as leaguesController from "../controllers/leaguesController";
+const express = require("express");
+const leaguesController = require("../controllers/leaguesController.js");
 
-const router = Router();
+const router = express.Router();
 
 router.get("/", leaguesController.getLeagues);
 router.get("/:id", leaguesController.getLeagueById);
@@ -11,4 +11,4 @@ router.delete("/:id", leaguesController.deleteLeague);
 router.get("/:id/standings", leaguesController.getLeagueStandings);
 router.put("/:id/standings-options", leaguesController.updateStandingsOptions);
 
-export default router;
+module.exports = router;

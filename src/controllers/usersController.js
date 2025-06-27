@@ -1,17 +1,15 @@
-import { Request, Response } from "express";
-import {
+const {
 	PutCommand,
 	GetCommand,
 	ScanCommand,
 	UpdateCommand,
 	DeleteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import ddbDocClient from "../utils/dynamoClient";
-import { User } from "../models/User";
+} = require("@aws-sdk/lib-dynamodb");
+const ddbDocClient = require("../utils/dynamoClient.js");
 
 const TABLE_NAME = process.env.USERS_TABLE || "";
 
-export const getUsers = async (req: Request, res: Response) => {
+const getUsers = async (req, res) => {
 	try {
 		const data = await ddbDocClient.send(
 			new ScanCommand({ TableName: TABLE_NAME })
@@ -22,7 +20,7 @@ export const getUsers = async (req: Request, res: Response) => {
 	}
 };
 
-export const getUserById = async (req: Request, res: Response) => {
+const getUserById = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const data = await ddbDocClient.send(
@@ -38,9 +36,9 @@ export const getUserById = async (req: Request, res: Response) => {
 	}
 };
 
-export const createUser = async (req: Request, res: Response) => {
+const createUser = async (req, res) => {
 	try {
-		const user: User = { ...req.body, id: req.body.id || crypto.randomUUID() };
+		const user = { ...req.body, id: req.body.id || crypto.randomUUID() };
 		await ddbDocClient.send(
 			new PutCommand({ TableName: TABLE_NAME, Item: user })
 		);
@@ -50,13 +48,13 @@ export const createUser = async (req: Request, res: Response) => {
 	}
 };
 
-export const updateUser = async (req: Request, res: Response) => {
+const updateUser = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { email, name, role } = req.body;
 		const updateExp = [];
-		const expAttrNames: Record<string, string> = {};
-		const expAttrValues: Record<string, any> = {};
+		const expAttrNames = {};
+		const expAttrValues = {};
 		if (email !== undefined) {
 			updateExp.push("#e = :e");
 			expAttrNames["#e"] = "email";
@@ -92,7 +90,7 @@ export const updateUser = async (req: Request, res: Response) => {
 	}
 };
 
-export const deleteUser = async (req: Request, res: Response) => {
+const deleteUser = async (req, res) => {
 	try {
 		const { id } = req.params;
 		await ddbDocClient.send(
@@ -102,4 +100,12 @@ export const deleteUser = async (req: Request, res: Response) => {
 	} catch (err) {
 		res.status(500).json({ error: "Failed to delete user" });
 	}
+};
+
+module.exports = {
+	getUsers,
+	getUserById,
+	createUser,
+	updateUser,
+	deleteUser,
 };

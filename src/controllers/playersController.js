@@ -1,20 +1,18 @@
-import { Request, Response } from "express";
-import {
+const {
 	PutCommand,
 	GetCommand,
 	ScanCommand,
 	UpdateCommand,
 	DeleteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import ddbDocClient from "../utils/dynamoClient";
-import { Player } from "../models/Player";
+} = require("@aws-sdk/lib-dynamodb");
+const ddbDocClient = require("../utils/dynamoClient.js");
 
 const TABLE_NAME = process.env.PLAYERS_TABLE || "";
 
-export const getPlayers = async (req: Request, res: Response) => {
+const getPlayers = async (req, res) => {
 	try {
 		const { teamId, leagueId } = req.query;
-		let params: any = { TableName: TABLE_NAME };
+		let params = { TableName: TABLE_NAME };
 		if (teamId || leagueId) {
 			params.FilterExpression = [];
 			params.ExpressionAttributeNames = {};
@@ -38,7 +36,7 @@ export const getPlayers = async (req: Request, res: Response) => {
 	}
 };
 
-export const getPlayerById = async (req: Request, res: Response) => {
+const getPlayerById = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const data = await ddbDocClient.send(
@@ -54,9 +52,9 @@ export const getPlayerById = async (req: Request, res: Response) => {
 	}
 };
 
-export const createPlayer = async (req: Request, res: Response) => {
+const createPlayer = async (req, res) => {
 	try {
-		const player: Player = {
+		const player = {
 			...req.body,
 			id: req.body.id || crypto.randomUUID(),
 		};
@@ -69,13 +67,13 @@ export const createPlayer = async (req: Request, res: Response) => {
 	}
 };
 
-export const updatePlayer = async (req: Request, res: Response) => {
+const updatePlayer = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { name, teamId, leagueId, position } = req.body;
 		const updateExp = [];
-		const expAttrNames: Record<string, string> = {};
-		const expAttrValues: Record<string, any> = {};
+		const expAttrNames = {};
+		const expAttrValues = {};
 		if (name !== undefined) {
 			updateExp.push("#n = :n");
 			expAttrNames["#n"] = "name";
@@ -116,7 +114,7 @@ export const updatePlayer = async (req: Request, res: Response) => {
 	}
 };
 
-export const deletePlayer = async (req: Request, res: Response) => {
+const deletePlayer = async (req, res) => {
 	try {
 		const { id } = req.params;
 		await ddbDocClient.send(
@@ -126,4 +124,12 @@ export const deletePlayer = async (req: Request, res: Response) => {
 	} catch (err) {
 		res.status(500).json({ error: "Failed to delete player" });
 	}
+};
+
+module.exports = {
+	getPlayers,
+	getPlayerById,
+	createPlayer,
+	updatePlayer,
+	deletePlayer,
 };

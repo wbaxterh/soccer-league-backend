@@ -1,17 +1,15 @@
-import { Request, Response } from "express";
-import {
+const {
 	PutCommand,
 	GetCommand,
 	ScanCommand,
 	UpdateCommand,
 	DeleteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import ddbDocClient from "../utils/dynamoClient";
-import { League } from "../models/League";
+} = require("@aws-sdk/lib-dynamodb");
+const ddbDocClient = require("../utils/dynamoClient.js");
 
 const TABLE_NAME = process.env.LEAGUES_TABLE || "";
 
-export const getLeagues = async (req: Request, res: Response) => {
+const getLeagues = async (req, res) => {
 	try {
 		const data = await ddbDocClient.send(
 			new ScanCommand({ TableName: TABLE_NAME })
@@ -22,7 +20,7 @@ export const getLeagues = async (req: Request, res: Response) => {
 	}
 };
 
-export const getLeagueById = async (req: Request, res: Response) => {
+const getLeagueById = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const data = await ddbDocClient.send(
@@ -38,9 +36,9 @@ export const getLeagueById = async (req: Request, res: Response) => {
 	}
 };
 
-export const createLeague = async (req: Request, res: Response) => {
+const createLeague = async (req, res) => {
 	try {
-		const league: League = {
+		const league = {
 			...req.body,
 			id: req.body.id || crypto.randomUUID(),
 		};
@@ -53,13 +51,13 @@ export const createLeague = async (req: Request, res: Response) => {
 	}
 };
 
-export const updateLeague = async (req: Request, res: Response) => {
+const updateLeague = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { name, season, standingsOptions } = req.body;
 		const updateExp = [];
-		const expAttrNames: Record<string, string> = {};
-		const expAttrValues: Record<string, any> = {};
+		const expAttrNames = {};
+		const expAttrValues = {};
 		if (name !== undefined) {
 			updateExp.push("#n = :n");
 			expAttrNames["#n"] = "name";
@@ -95,7 +93,7 @@ export const updateLeague = async (req: Request, res: Response) => {
 	}
 };
 
-export const deleteLeague = async (req: Request, res: Response) => {
+const deleteLeague = async (req, res) => {
 	try {
 		const { id } = req.params;
 		await ddbDocClient.send(
@@ -107,10 +105,20 @@ export const deleteLeague = async (req: Request, res: Response) => {
 	}
 };
 
-export const getLeagueStandings = async (req: Request, res: Response) => {
+const getLeagueStandings = async (req, res) => {
 	res.status(501).json({ error: "Not implemented" });
 };
 
-export const updateStandingsOptions = async (req: Request, res: Response) => {
+const updateStandingsOptions = async (req, res) => {
 	res.status(501).json({ error: "Not implemented" });
+};
+
+module.exports = {
+	getLeagues,
+	getLeagueById,
+	createLeague,
+	updateLeague,
+	deleteLeague,
+	getLeagueStandings,
+	updateStandingsOptions,
 };

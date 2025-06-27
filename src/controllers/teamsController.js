@@ -1,20 +1,18 @@
-import { Request, Response } from "express";
-import {
+const {
 	PutCommand,
 	GetCommand,
 	ScanCommand,
 	UpdateCommand,
 	DeleteCommand,
-} from "@aws-sdk/lib-dynamodb";
-import ddbDocClient from "../utils/dynamoClient";
-import { Team } from "../models/Team";
+} = require("@aws-sdk/lib-dynamodb");
+const ddbDocClient = require("../utils/dynamoClient.js");
 
 const TABLE_NAME = process.env.TEAMS_TABLE || "";
 
-export const getTeams = async (req: Request, res: Response) => {
+const getTeams = async (req, res) => {
 	try {
 		const { leagueId } = req.query;
-		let params: any = { TableName: TABLE_NAME };
+		let params = { TableName: TABLE_NAME };
 		if (leagueId) {
 			params.FilterExpression = "#l = :l";
 			params.ExpressionAttributeNames = { "#l": "leagueId" };
@@ -27,7 +25,7 @@ export const getTeams = async (req: Request, res: Response) => {
 	}
 };
 
-export const getTeamById = async (req: Request, res: Response) => {
+const getTeamById = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const data = await ddbDocClient.send(
@@ -43,9 +41,9 @@ export const getTeamById = async (req: Request, res: Response) => {
 	}
 };
 
-export const createTeam = async (req: Request, res: Response) => {
+const createTeam = async (req, res) => {
 	try {
-		const team: Team = { ...req.body, id: req.body.id || crypto.randomUUID() };
+		const team = { ...req.body, id: req.body.id || crypto.randomUUID() };
 		await ddbDocClient.send(
 			new PutCommand({ TableName: TABLE_NAME, Item: team })
 		);
@@ -55,13 +53,13 @@ export const createTeam = async (req: Request, res: Response) => {
 	}
 };
 
-export const updateTeam = async (req: Request, res: Response) => {
+const updateTeam = async (req, res) => {
 	try {
 		const { id } = req.params;
 		const { name, leagueId, players } = req.body;
 		const updateExp = [];
-		const expAttrNames: Record<string, string> = {};
-		const expAttrValues: Record<string, any> = {};
+		const expAttrNames = {};
+		const expAttrValues = {};
 		if (name !== undefined) {
 			updateExp.push("#n = :n");
 			expAttrNames["#n"] = "name";
@@ -97,7 +95,7 @@ export const updateTeam = async (req: Request, res: Response) => {
 	}
 };
 
-export const deleteTeam = async (req: Request, res: Response) => {
+const deleteTeam = async (req, res) => {
 	try {
 		const { id } = req.params;
 		await ddbDocClient.send(
@@ -107,4 +105,12 @@ export const deleteTeam = async (req: Request, res: Response) => {
 	} catch (err) {
 		res.status(500).json({ error: "Failed to delete team" });
 	}
+};
+
+module.exports = {
+	getTeams,
+	getTeamById,
+	createTeam,
+	updateTeam,
+	deleteTeam,
 };

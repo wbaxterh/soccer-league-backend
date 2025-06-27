@@ -26,3 +26,5 @@ coverage/
 # Others
 *.log
 *.tsbuildinfo 
+
+src_ts/

@@ -16,7 +16,11 @@ const getUsers = async (req, res) => {
 		);
 		res.json(data.Items || []);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to fetch users" });
+		console.error("Failed to fetch users", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to fetch users",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -32,7 +36,11 @@ const getUserById = async (req, res) => {
 		}
 		res.json(data.Item);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to fetch user" });
+		console.error("Failed to fetch user", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to fetch user",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -44,7 +52,11 @@ const createUser = async (req, res) => {
 		);
 		res.status(201).json(user);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to create user" });
+		console.error("Failed to create user", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to create user",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -86,7 +98,11 @@ const updateUser = async (req, res) => {
 		);
 		res.json(data.Attributes);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to update user" });
+		console.error("Failed to update user", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to update user",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -98,7 +114,11 @@ const deleteUser = async (req, res) => {
 		);
 		res.status(204).send();
 	} catch (err) {
-		res.status(500).json({ error: "Failed to delete user" });
+		console.error("Failed to delete user", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to delete user",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 

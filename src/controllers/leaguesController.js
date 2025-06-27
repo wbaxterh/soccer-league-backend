@@ -16,7 +16,14 @@ const getLeagues = async (req, res) => {
 		);
 		res.json(data.Items || []);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to fetch leagues" });
+		console.error(
+			"Failed to fetch leagues",
+			err && err.stack ? err.stack : err
+		);
+		res.status(500).json({
+			error: "Failed to fetch leagues",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -32,7 +39,11 @@ const getLeagueById = async (req, res) => {
 		}
 		res.json(data.Item);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to fetch league" });
+		console.error("Failed to fetch league", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to fetch league",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -47,7 +58,14 @@ const createLeague = async (req, res) => {
 		);
 		res.status(201).json(league);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to create league" });
+		console.error(
+			"Failed to create league",
+			err && err.stack ? err.stack : err
+		);
+		res.status(500).json({
+			error: "Failed to create league",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -89,7 +107,14 @@ const updateLeague = async (req, res) => {
 		);
 		res.json(data.Attributes);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to update league" });
+		console.error(
+			"Failed to update league",
+			err && err.stack ? err.stack : err
+		);
+		res.status(500).json({
+			error: "Failed to update league",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -101,7 +126,14 @@ const deleteLeague = async (req, res) => {
 		);
 		res.status(204).send();
 	} catch (err) {
-		res.status(500).json({ error: "Failed to delete league" });
+		console.error(
+			"Failed to delete league",
+			err && err.stack ? err.stack : err
+		);
+		res.status(500).json({
+			error: "Failed to delete league",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 

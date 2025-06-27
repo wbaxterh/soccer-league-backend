@@ -21,7 +21,11 @@ const getTeams = async (req, res) => {
 		const data = await ddbDocClient.send(new ScanCommand(params));
 		res.json(data.Items || []);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to fetch teams" });
+		console.error("Failed to fetch teams", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to fetch teams",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -37,7 +41,11 @@ const getTeamById = async (req, res) => {
 		}
 		res.json(data.Item);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to fetch team" });
+		console.error("Failed to fetch team", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to fetch team",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -49,7 +57,11 @@ const createTeam = async (req, res) => {
 		);
 		res.status(201).json(team);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to create team" });
+		console.error("Failed to create team", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to create team",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -91,7 +103,11 @@ const updateTeam = async (req, res) => {
 		);
 		res.json(data.Attributes);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to update team" });
+		console.error("Failed to update team", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to update team",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -103,7 +119,11 @@ const deleteTeam = async (req, res) => {
 		);
 		res.status(204).send();
 	} catch (err) {
-		res.status(500).json({ error: "Failed to delete team" });
+		console.error("Failed to delete team", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to delete team",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 

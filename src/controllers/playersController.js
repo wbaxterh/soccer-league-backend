@@ -32,7 +32,14 @@ const getPlayers = async (req, res) => {
 		const data = await ddbDocClient.send(new ScanCommand(params));
 		res.json(data.Items || []);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to fetch players" });
+		console.error(
+			"Failed to fetch players",
+			err && err.stack ? err.stack : err
+		);
+		res.status(500).json({
+			error: "Failed to fetch players",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -48,7 +55,11 @@ const getPlayerById = async (req, res) => {
 		}
 		res.json(data.Item);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to fetch player" });
+		console.error("Failed to fetch player", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to fetch player",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -63,7 +74,14 @@ const createPlayer = async (req, res) => {
 		);
 		res.status(201).json(player);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to create player" });
+		console.error(
+			"Failed to create player",
+			err && err.stack ? err.stack : err
+		);
+		res.status(500).json({
+			error: "Failed to create player",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -110,7 +128,14 @@ const updatePlayer = async (req, res) => {
 		);
 		res.json(data.Attributes);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to update player" });
+		console.error(
+			"Failed to update player",
+			err && err.stack ? err.stack : err
+		);
+		res.status(500).json({
+			error: "Failed to update player",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -122,7 +147,14 @@ const deletePlayer = async (req, res) => {
 		);
 		res.status(204).send();
 	} catch (err) {
-		res.status(500).json({ error: "Failed to delete player" });
+		console.error(
+			"Failed to delete player",
+			err && err.stack ? err.stack : err
+		);
+		res.status(500).json({
+			error: "Failed to delete player",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 

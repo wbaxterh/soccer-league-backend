@@ -31,7 +31,11 @@ const getGames = async (req, res) => {
 		const data = await ddbDocClient.send(new ScanCommand(params));
 		res.json(data.Items || []);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to fetch games" });
+		console.error("Failed to fetch games", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to fetch games",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -47,7 +51,11 @@ const getGameById = async (req, res) => {
 		}
 		res.json(data.Item);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to fetch game" });
+		console.error("Failed to fetch game", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to fetch game",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -59,7 +67,11 @@ const createGame = async (req, res) => {
 		);
 		res.status(201).json(game);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to create game" });
+		console.error("Failed to create game", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to create game",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -111,7 +123,11 @@ const updateGame = async (req, res) => {
 		);
 		res.json(data.Attributes);
 	} catch (err) {
-		res.status(500).json({ error: "Failed to update game" });
+		console.error("Failed to update game", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to update game",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 
@@ -123,7 +139,11 @@ const deleteGame = async (req, res) => {
 		);
 		res.status(204).send();
 	} catch (err) {
-		res.status(500).json({ error: "Failed to delete game" });
+		console.error("Failed to delete game", err && err.stack ? err.stack : err);
+		res.status(500).json({
+			error: "Failed to delete game",
+			details: err && err.message ? err.message : String(err),
+		});
 	}
 };
 

@@ -5,6 +5,8 @@ const {
 	UpdateCommand,
 	DeleteCommand,
 } = require("@aws-sdk/lib-dynamodb");
+const crypto = require("crypto");
+
 const ddbDocClient = require("../utils/dynamoClient.js");
 
 const TABLE_NAME = process.env.LEAGUES_TABLE || "";

@@ -13,16 +13,16 @@ const TABLE_NAME = process.env.PLAYERS_TABLE || "";
 
 const getPlayers = async (req, res) => {
 	try {
-		const { teamId, leagueId } = req.query;
+		const { teamIds, leagueId } = req.query;
 		let params = { TableName: TABLE_NAME };
-		if (teamId || leagueId) {
+		if (teamIds || leagueId) {
 			params.FilterExpression = [];
 			params.ExpressionAttributeNames = {};
 			params.ExpressionAttributeValues = {};
-			if (teamId) {
-				params.FilterExpression.push("#t = :t");
-				params.ExpressionAttributeNames["#t"] = "teamId";
-				params.ExpressionAttributeValues[":t"] = teamId;
+			if (teamIds) {
+				params.FilterExpression.push("contains(#t, :t)");
+				params.ExpressionAttributeNames["#t"] = "teamIds";
+				params.ExpressionAttributeValues[":t"] = teamIds;
 			}
 			if (leagueId) {
 				params.FilterExpression.push("#l = :l");
@@ -70,6 +70,7 @@ const createPlayer = async (req, res) => {
 		const player = {
 			...req.body,
 			id: req.body.id || crypto.randomUUID(),
+			teamIds: req.body.teamIds || [],
 		};
 		await ddbDocClient.send(
 			new PutCommand({ TableName: TABLE_NAME, Item: player })
@@ -90,7 +91,7 @@ const createPlayer = async (req, res) => {
 const updatePlayer = async (req, res) => {
 	try {
 		const { id } = req.params;
-		const { name, teamId, leagueId, position } = req.body;
+		const { name, teamIds, leagueId, position } = req.body;
 		const updateExp = [];
 		const expAttrNames = {};
 		const expAttrValues = {};
@@ -99,10 +100,10 @@ const updatePlayer = async (req, res) => {
 			expAttrNames["#n"] = "name";
 			expAttrValues[":n"] = name;
 		}
-		if (teamId !== undefined) {
+		if (teamIds !== undefined) {
 			updateExp.push("#t = :t");
-			expAttrNames["#t"] = "teamId";
-			expAttrValues[":t"] = teamId;
+			expAttrNames["#t"] = "teamIds";
+			expAttrValues[":t"] = teamIds;
 		}
 		if (leagueId !== undefined) {
 			updateExp.push("#l = :l");
